@@ -1,4 +1,4 @@
-package main
+package sudoku
 
 
 // NumSet is a set where the possible members of the set are integers 
