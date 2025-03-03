@@ -1,156 +1,10 @@
 package main
 
 import (
-  "math/rand"
   "math"
-  "errors"
+  "math/rand"
+	"errors"
 )
-
-type NumSet struct {
-  a []bool
-  cnt int
-}
-
-func NewNumSet(size int) NumSet {
-  return NumSet {
-    a: make([]bool, size),
-    cnt: 0,
-  }
-}
-
-func (set* NumSet) Fill() {
-  for i := range len(set.a) {
-    set.a[i] = true
-  }
-  set.cnt = len(set.a)
-}
-
-func (set* NumSet) SetVal(num int) {
-  if num < 1 || num > len(set.a) {
-    panic("SetVal called with number out of range")
-  }
-  set.a[num-1] = true
-  set.cnt++
-}
-
-func (set* NumSet) ClearVal(num int) {
-  if num < 1 || num > len(set.a) {
-    panic("ClearVal called with number out of range")
-  }
-  set.a[num-1] = false
-  set.cnt--
-}
-
-func (set *NumSet) Has(num int) bool {
-  return num>0 && num<len(set.a)+1 && set.a[num-1] == true
-}
-
-func (set *NumSet) Count() int {
-  return set.cnt
-}
-
-func (set *NumSet) PickRandom() (int,error) {
-  if set.Count() == 0 {
-    return 0, errors.New("Set is empty")
-  }
-  
-  // randomly choose item out of the set
-  randItem := rand.Intn(set.Count()) + 1
-  
-  // find the matching item, return the val
-  count := 0
-  for i := range len(set.a) {
-    if set.a[i] == true {
-      count++
-      if (count == randItem) {
-        return i + 1, nil
-      }
-    } 
-  }
-  
-  panic("PickRandom: unexpected error")
-}
-
-func Union(set1 NumSet, set2 NumSet) NumSet {
-  // just in case sets are different lengths (they shouldn't be in this though)
-  biggest := int(math.Max(float64(len(set1.a)), float64(len(set2.a))))
-  result := NewNumSet(biggest)
-  for i := range biggest {
-    if (set1.Has(i+1) && set2.Has(i+1)) {
-      result.SetVal(i+1)
-    }
-  }
-  return result
-}
-
-// todo make this an arg
-const gridSize int = 9
-const subboxWidth int = 3
-const subboxHeight int = 3
-
-func GenerateSudoku() [][]int {
-  
-  // initialise grid
-  sudoku := make([][]int, gridSize)
-  for i := 0; i<gridSize; i++ {
-    sudoku[i] = make([]int, gridSize)
-    for j := 0; j<gridSize; j++ {
-      sudoku[i][j] = 0
-    }
-  }
-
-  rowCandidates := NewNumSet(gridSize)
-
-  for r := 0; r<gridSize; r++ {
-    //reset available values for this new row
-    rowCandidates.Fill()
-    for c := 0; c<gridSize; c++ {
-      
-
-      colCandidates := NewNumSet(gridSize)
-      colCandidates.Fill()
-      for rn := 0; rn<r; rn++ { 
-        colCandidates.ClearVal(sudoku[rn][c])
-      }
-
-      subboxCandidates := NewNumSet(gridSize)
-      subboxCandidates.Fill()
-      subboxTop := int(math.Floor(float64(r/subboxHeight))) * subboxHeight
-      subboxLeft := int(math.Floor(float64(c/subboxWidth))) * subboxWidth
-      for rb := subboxTop; rb<subboxTop+subboxHeight; rb++ {
-        for cb := subboxLeft; cb < subboxLeft+subboxWidth; cb++ {
-          if rb>r || (rb == r && cb>=c) {
-            // don't look ahead
-            continue
-          }
-          subboxCandidates.ClearVal(sudoku[rb][cb])
-        }
-      }
-
-
-      union := Union(Union(colCandidates, rowCandidates), subboxCandidates)
-      if (union.Count() > 0) {
-        val,_ := union.PickRandom()
-        sudoku[r][c] = val
-        rowCandidates.ClearVal(val)
-        subboxCandidates.ClearVal(val)
-      } else {
-          if (r+1) % subboxHeight == 0 {
-            // retry subbox, move row to start of current subbox
-            r = subboxTop-1
-            
-          } else {
-            // retry row
-            r--
-          }
-          break
-        }
-      }
-  }
-
-  return sudoku
-}
-
 
 
 func VerifySudoku(sudoku [][]int) bool {
@@ -202,4 +56,108 @@ func VerifySudoku(sudoku [][]int) bool {
   }
 
   return true
+}
+
+
+const gridSize int = 9
+const subboxWidth int = 3
+const subboxHeight int = 3
+
+func GenerateSudoku() [][]int {
+  
+  // initialise grid
+  sudoku := make([][]int, gridSize)
+  for i := 0; i<gridSize; i++ {
+    sudoku[i] = make([]int, gridSize)
+    for j := 0; j<gridSize; j++ {
+      sudoku[i][j] = 0
+    }
+  }
+
+  rowCandidates := NewNumSet(gridSize)
+
+  for r := 0; r<gridSize; r++ {
+    //reset available values for this new row
+    rowCandidates.Fill()
+    for c := 0; c<gridSize; c++ {
+      
+
+      colCandidates := NewNumSet(gridSize)
+      colCandidates.Fill()
+      for rn := 0; rn<r; rn++ { 
+        colCandidates.ClearNum(sudoku[rn][c])
+      }
+
+      subboxCandidates := NewNumSet(gridSize)
+      subboxCandidates.Fill()
+      subboxTop := int(math.Floor(float64(r/subboxHeight))) * subboxHeight
+      subboxLeft := int(math.Floor(float64(c/subboxWidth))) * subboxWidth
+      for rb := subboxTop; rb<subboxTop+subboxHeight; rb++ {
+        for cb := subboxLeft; cb < subboxLeft+subboxWidth; cb++ {
+          if rb>r || (rb == r && cb>=c) {
+            // don't look ahead
+            continue
+          }
+          subboxCandidates.ClearNum(sudoku[rb][cb])
+        }
+      }
+
+
+      combinedSet := Union(subboxCandidates, Union(colCandidates,rowCandidates))
+      if (combinedSet.Count() > 0) {
+        val,_ := PickRandom(combinedSet)
+        sudoku[r][c] = val
+        rowCandidates.ClearNum(val)
+        subboxCandidates.ClearNum(val)
+      } else {
+          if (r+1) % subboxHeight == 0 {
+            // retry subbox, move row to start of current subbox
+            r = subboxTop-1
+            
+          } else {
+            // retry row
+            r--
+          }
+          break
+        }
+      }
+  }
+
+  return sudoku
+}
+
+
+func Union(set1 NumSet, set2 NumSet) NumSet {
+  // just in case sets are different lengths (they shouldn't be in this though)
+  maxNum := int(math.Max(float64(set1.MaxNum()), float64(set2.MaxNum())))
+  result := NewNumSet(maxNum)
+  for num:=1; num<=maxNum; num++ {
+    if (set1.Has(num) && set2.Has(num)) {
+      result.SetNum(num)
+    }
+  }
+  return result
+}
+
+
+func PickRandom(set NumSet) (int,error) {
+  setSize := set.Count()
+  if setSize == 0 {
+    return 0, errors.New("Set is empty")
+  }
+  
+  // randomly choose from the set members
+  randItem := rand.Intn(setSize) + 1
+  
+  // find from the possible set members and return its val
+  count := 0
+  for num:=1; num<=set.MaxNum(); num++ {
+    if set.Has(num) == true {
+      count++
+      if (count == randItem) {
+        return num, nil
+      }
+    } 
+  }
+  panic("PickRandom: unexpected error")
 }
