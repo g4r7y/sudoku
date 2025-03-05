@@ -85,14 +85,29 @@ func TestVerifySudoku(t *testing.T) {
 
 func TestGenerateSudoko(t *testing.T) {
 
-	for _ = range 1000 {
-		sudoku := GenerateSudoku()
-
+	checkSudoku := func(sudoku [][]int) {
 		if !VerifySudoku(sudoku) {
 			for i := range len(sudoku) {
 				t.Errorf("%v",sudoku[i])
 			}
 			t.Fatal("GenerateSudoku produced invalid sudoku.")
 		}
+	} 
+
+  for _ = range 500 {
+		sudoku := GenerateSudoku(9)
+		checkSudoku(sudoku)
+	}
+
+	for _ = range 200 {
+		sudoku := GenerateSudoku(6)
+		checkSudoku(sudoku)
+	}
+
+	for _ = range 100 {
+		sudoku := GenerateSudoku(4)
+		checkSudoku(sudoku)
 	}
 }
+
+

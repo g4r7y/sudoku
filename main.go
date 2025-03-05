@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	sudoku := sudoku.GenerateSudoku()
+	sudoku := sudoku.GenerateSudoku(9)
 	for r := range sudoku {
 		fmt.Printf("%v\n", sudoku[r])
 	}

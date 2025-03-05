@@ -1,14 +1,28 @@
 package sudoku
 
 import (
-  "math"
-  "math/rand"
 	"errors"
+  "math/rand"
 )
 
 
 func VerifySudoku(sudoku [][]int) bool {
   gridSize := len(sudoku)
+  var subboxWidth, subboxHeight int
+  switch gridSize {
+  case 9: 
+    subboxWidth = 3
+    subboxHeight = 3
+  case 6:
+    subboxWidth = 3
+    subboxHeight = 2
+  case 4:
+    subboxWidth = 2
+    subboxHeight = 2
+  default:
+    // invalid sudoku size
+    return false
+  }
 
   // array containing map for each subbox
   subBoxes := make([]map[int]bool, gridSize)
@@ -37,7 +51,8 @@ func VerifySudoku(sudoku [][]int) bool {
       rowVals[val] = true
 
      // check current subbox
-      subBoxId := int(3 * math.Floor(float64(r) / 3) + math.Floor(float64(c) / 3))
+      subBoxId := subboxHeight * (r / subboxHeight) +  c / subboxWidth
+
       subBoxVals := subBoxes[subBoxId]
       if subBoxVals[val] == true {
         //already encountered this val in this subbox
@@ -59,11 +74,21 @@ func VerifySudoku(sudoku [][]int) bool {
 }
 
 
-const gridSize int = 9
-const subboxWidth int = 3
-const subboxHeight int = 3
-
-func GenerateSudoku() [][]int {
+func GenerateSudoku(gridSize int) [][]int {
+  var subboxWidth, subboxHeight int
+  switch gridSize {
+  case 9: 
+    subboxWidth = 3
+    subboxHeight = 3
+  case 6:
+    subboxWidth = 3
+    subboxHeight = 2
+  case 4:
+    subboxWidth = 2
+    subboxHeight = 2
+  default: 
+    panic("Invalid sudoku size")
+  }
   
   // initialise grid
   sudoku := make([][]int, gridSize)
@@ -90,8 +115,8 @@ func GenerateSudoku() [][]int {
 
       subboxCandidates := NewNumSet(gridSize)
       subboxCandidates.Fill()
-      subboxTop := int(math.Floor(float64(r/subboxHeight))) * subboxHeight
-      subboxLeft := int(math.Floor(float64(c/subboxWidth))) * subboxWidth
+      subboxTop := (r/subboxHeight) * subboxHeight
+      subboxLeft := (c/subboxWidth) * subboxWidth
       for rb := subboxTop; rb<subboxTop+subboxHeight; rb++ {
         for cb := subboxLeft; cb < subboxLeft+subboxWidth; cb++ {
           if rb>r || (rb == r && cb>=c) {
@@ -128,8 +153,10 @@ func GenerateSudoku() [][]int {
 
 
 func Union(set1 NumSet, set2 NumSet) NumSet {
-  // just in case sets are different lengths (they shouldn't be in this though)
-  maxNum := int(math.Max(float64(set1.MaxNum()), float64(set2.MaxNum())))
+  maxNum := set1.MaxNum()
+  if set2.MaxNum() > maxNum {
+    maxNum = set2.MaxNum()
+  }
   result := NewNumSet(maxNum)
   for num:=1; num<=maxNum; num++ {
     if (set1.Has(num) && set2.Has(num)) {
