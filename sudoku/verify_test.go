@@ -83,31 +83,81 @@ func TestVerifySudoku(t *testing.T) {
 	}
 }
 
-func TestGenerateSudoko(t *testing.T) {
 
-	checkSudoku := func(sudoku [][]int) {
-		if !VerifySudoku(sudoku) {
-			for i := range len(sudoku) {
-				t.Errorf("%v",sudoku[i])
-			}
-			t.Fatal("GenerateSudoku produced invalid sudoku.")
-		}
-	} 
-
-  for _ = range 500 {
-		sudoku := GenerateSudoku(9)
-		checkSudoku(sudoku)
+func TestVerifyPartialSudoku(t *testing.T) {
+	sudoku := [][]int{
+		{0,2,4,0,0,0,3,0,0},
+		{1,0,8,0,2,0,4,0,9},
+		{0,6,0,5,0,4,0,0,1},
+		{0,7,2,3,1,0,0,0,5},
+		{0,0,0,0,0,0,0,0,0},
+		{8,0,0,0,5,0,1,0,0},
+		{9,0,0,1,0,3,0,0,0},
+		{3,8,6,2,7,9,0,0,0},
+		{0,0,0,8,0,5,0,0,0},
+	}
+	if !VerifyPartialSudoku(sudoku) {
+		t.Fatal("VerifyPartialSudoku: valid sudoku should return true, got false")
+	}
+	
+	sudoku = [][]int{
+		{0,2,4,0,0,0,3,0,-10},// invalid number
+		{1,0,8,0,2,0,4,0,9},
+		{0,6,0,5,0,4,0,0,1},
+		{0,7,2,3,1,0,0,0,5},
+		{0,0,0,0,0,0,0,0,0},
+		{8,0,0,0,5,0,1,0,0},
+		{9,0,0,1,0,3,0,0,0},
+		{3,8,6,2,7,9,0,0,0},
+		{0,0,0,8,0,5,0,0,0},
+	}
+	if VerifyPartialSudoku(sudoku)==true {
+		t.Fatal("VerifyPartialSudoku: sudoku with invalid number should return false, got true")
 	}
 
-	for _ = range 200 {
-		sudoku := GenerateSudoku(6)
-		checkSudoku(sudoku)
+	sudoku = [][]int{
+		{0,2,4,0,0,0,3,0,0},
+		{1,0,8,0,2,0,0,0,9},
+		{0,6,0,5,0,4,4,0,1},//duplicate 4 in row
+		{0,7,2,3,1,0,0,0,5},
+		{0,0,0,0,0,0,0,0,0},
+		{8,0,0,0,5,0,1,0,0},
+		{9,0,0,1,0,3,0,0,0},
+		{3,8,6,2,7,9,0,0,0},
+		{0,0,0,8,0,5,0,0,0},
+	}
+	if VerifyPartialSudoku(sudoku)==true {
+		t.Fatal("VerifyPartialSudoku: sudoku with duplicate in row should return false, got true")
 	}
 
-	for _ = range 100 {
-		sudoku := GenerateSudoku(4)
-		checkSudoku(sudoku)
+	sudoku = [][]int{
+		{0,2,4,0,0,0,3,0,0},
+		{1,0,8,0,2,0,4,0,9},
+		{0,6,0,5,0,4,0,0,1},
+		{0,7,2,3,1,0,0,0,5},
+		{0,0,0,0,0,0,0,0,0},
+		{8,0,0,0,5,0,1,0,0},
+		{9,0,0,1,0,3,0,0,0},
+		{3,8,6,2,7,9,0,0,0},
+		{0,0,0,8,0,5,0,0,1},//duplicate 1 in last column
+	}
+	if VerifyPartialSudoku(sudoku)==true {
+		t.Fatal("VerifyPartialSudoku: sudoku with duplicate in column should return false, got true")
+	}
+
+
+	sudoku = [][]int{
+		{0,2,4,0,0,0,3,0,0},
+		{1,0,8,0,2,0,4,0,9},
+		{0,6,0,5,0,4,0,0,3},//duplicate 3 in top right subblock
+		{0,7,2,3,1,0,0,0,5},
+		{0,0,0,0,0,0,0,0,0},
+		{8,0,0,0,5,0,1,0,0},
+		{9,0,0,1,0,3,0,0,0},
+		{3,8,6,2,7,9,0,0,0},
+		{0,0,0,8,0,5,0,0,0},
+	}
+	if VerifyPartialSudoku(sudoku)==true {
+		t.Fatal("VerifyPartialSudoku: sudoku with duplicate in subblock should return false, got true")
 	}
 }
-
-

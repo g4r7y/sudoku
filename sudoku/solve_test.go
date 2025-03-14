@@ -1,0 +1,67 @@
+package sudoku
+
+import (
+	"testing"
+	"reflect"
+)
+
+func TestSolveSudoku(t *testing.T) {
+	sudoku := [][]int{
+		{5,0,4,0,0,0,0,7,0},
+		{1,3,0,6,2,0,0,0,9},
+		{0,6,0,0,0,4,2,0,1},
+		{4,0,2,3,0,8,9,0,5},
+		{0,0,0,0,9,0,7,3,0},
+		{0,0,3,0,0,6,0,4,0},
+		{9,0,0,0,0,3,0,0,0},
+		{3,8,0,2,0,0,0,0,0},
+		{0,0,7,0,4,0,6,0,0},
+	}
+
+	want := [][]int{
+		{5,2,4,9,8,1,3,7,6},
+		{1,3,8,6,2,7,4,5,9},
+		{7,6,9,5,3,4,2,8,1},
+		{4,7,2,3,1,8,9,6,5},
+		{6,5,1,4,9,2,7,3,8},
+		{8,9,3,7,5,6,1,4,2},
+		{9,4,5,1,6,3,8,2,7},
+		{3,8,6,2,7,9,5,1,4},
+		{2,1,7,8,4,5,6,9,3},
+	}
+
+	solution,err := Solve(sudoku)
+	if err!=nil {
+		t.Fatalf("TestSolveSudoku gave unexpected error: %v", err)
+	}
+	if !reflect.DeepEqual(solution, want) {
+		t.Fatalf("TestSolveSudoku solution: \n%v does not match expected: \n%v", solution, want)
+	}
+}
+
+func TestSolveSudoku_InvalidArgs(t *testing.T) {
+	invalidSudoku := [][]int{
+		{1,2,3},
+		{3,0,2},
+		{2,3,1},
+	}
+
+	_,err := Solve(invalidSudoku)
+	want := "Sudoku has unsupported size" 
+	if err==nil || err.Error()!=want{
+		t.Fatalf("TestSolveSudoku should have given error: %v but it gave error: %v", want,err)
+	}
+
+	invalidSudoku = [][]int{
+		{3,1,2,100},
+		{4,2,3,1},
+		{2,4,1,3},
+		{1,3,4,2},
+	}
+
+	_,err = Solve(invalidSudoku)
+	want = "Sudoku is invalid"
+	if err==nil || err.Error()!=want {
+		t.Fatalf("TestSolveSudoku should have given error: %v but it gave error: %v", want,err)
+	}
+}
