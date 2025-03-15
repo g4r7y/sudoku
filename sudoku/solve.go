@@ -94,7 +94,7 @@ func Solve(inputSudoku [][]int) ([][]int, error) {
         solution[r][c] = val
         rowCandidates.ClearNum(val)
       } else {
-				if rowTries < 10 {
+				if rowTries < 9 {
 					// back to start of row
 					rowTries++
 				} else if subboxTries < 3 && r > subboxTop {
