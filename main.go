@@ -1,7 +1,7 @@
 package main
 
 import (
-	"codeberg.org/grty/sudoku/sudoku"
+	"github.com/g4r7y/sudoku/sudoku"
 	"errors"
 	"fmt"
 	"io"
