@@ -8,13 +8,13 @@ func TestGenerateSudoko(t *testing.T) {
 	checkSudoku := func(sudoku [][]int) {
 		if !VerifyPartialSudoku(sudoku) {
 			for i := range len(sudoku) {
-				t.Errorf("%v",sudoku[i])
+				t.Errorf("%v", sudoku[i])
 			}
 			t.Fatal("GenerateSudoku produced invalid sudoku.")
 		}
-	} 
+	}
 
-  for range 500 {
+	for range 500 {
 		sudoku := GenerateSudoku(9, DifficultyMedium)
 		checkSudoku(sudoku)
 	}
@@ -29,7 +29,4 @@ func TestGenerateSudoko(t *testing.T) {
 		checkSudoku(sudoku)
 	}
 
-
 }
-
-

@@ -1,9 +1,11 @@
 # sudoku
 
-Sudoku generator and solver.
-For all your command line sudoku needs!
+Command line sudoku generator and solver.
+For all your sudoku needs!
 
 ## Build
+
+Install [Go](https://go.dev/doc/install)
 
 ```make```
 
@@ -18,6 +20,10 @@ Generate a sudoku:
 Solve a sudoku:
 
 ```sudoku solve <sudoku-grid>```
+
+Generate and solve a sudoku:
+
+```sudoku generate | sudoku solve```
 
 For more usage information:
 

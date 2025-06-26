@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/g4r7y/sudoku/sudoku"
 	"errors"
 	"fmt"
+	"github.com/g4r7y/sudoku/sudoku"
 	"io"
 	"os"
 	"regexp"
