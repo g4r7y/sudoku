@@ -13,26 +13,48 @@ import (
 const emptyCell = " "
 
 func printSudoku(grid [][]int) {
+	subBoxWidth := 3
+	subBoxHeight := 3
+	if (len(grid) == 6) {
+		subBoxHeight = 2
+	}
+	if (len(grid) == 4) {
+		subBoxWidth = 2
+		subBoxHeight = 2
+	}
+
 	topBorder := "╔═"
 	bottomBorder := "╚═"
 	horizGrid := "╟─"
-	for x := range grid[0] {
-		if x>0 {
+	horizGridBold := "╠═"
+	for x:=1; x<len(grid[0]); x++ {
+		if (x % subBoxWidth == 0) {
+			topBorder += "══╦═"
+			bottomBorder += "══╩═"
+			horizGrid += "──╫─"
+			horizGridBold += "══╬═"
+		} else {
 			topBorder += "══╤═"
 			bottomBorder += "══╧═"
 			horizGrid += "──┼─"
+			horizGridBold += "══╪═"
 		}
 	}
 	topBorder += "══╗"
 	bottomBorder += "══╝"
 	horizGrid += "──╢"
+	horizGridBold += "══╣"
 
 	fmt.Println(topBorder)
 
 	for r := range grid {
 		if r > 0 {
-			fmt.Println(horizGrid)
-		}
+			if (r % subBoxHeight == 0) {
+				fmt.Println(horizGridBold)
+			} else {
+				fmt.Println(horizGrid)
+			}
+		} 
 		fmt.Print("║ ")
 		for c := range grid[r] {
 			val := strconv.Itoa(grid[r][c])
@@ -41,7 +63,11 @@ func printSudoku(grid [][]int) {
 			}
 			spacer := ""
 			if c>0 {
-				spacer = " │ "
+				if (c % subBoxWidth == 0) {
+					spacer = " ║ "
+					} else {
+					spacer = " │ "
+				}
 			}
 			fmt.Printf("%v%v", spacer, val)
 		}
