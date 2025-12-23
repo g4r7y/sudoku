@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-const emptyCell = " "
+const emptyCell = "\u00A0" //nbsp
 
 func printSudoku(grid [][]int) {
 	subBoxWidth := 3
