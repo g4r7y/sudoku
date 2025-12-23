@@ -10,33 +10,46 @@ import (
 	"strconv"
 )
 
-const emptyCell = "□"
+const emptyCell = " "
 
 func printSudoku(grid [][]int) {
 	topBorder := "╔═"
-	for range grid[0] {
-		topBorder += "══"
+	bottomBorder := "╚═"
+	horizGrid := "╟─"
+	for x := range grid[0] {
+		if x>0 {
+			topBorder += "══╤═"
+			bottomBorder += "══╧═"
+			horizGrid += "──┼─"
+		}
 	}
-	topBorder += "╗"
+	topBorder += "══╗"
+	bottomBorder += "══╝"
+	horizGrid += "──╢"
+
 	fmt.Println(topBorder)
 
 	for r := range grid {
+		if r > 0 {
+			fmt.Println(horizGrid)
+		}
 		fmt.Print("║ ")
 		for c := range grid[r] {
 			val := strconv.Itoa(grid[r][c])
 			if val == "0" {
 				val = emptyCell
 			}
-			fmt.Printf("%v ", val)
+			spacer := ""
+			if c>0 {
+				spacer = " │ "
+			}
+			fmt.Printf("%v%v", spacer, val)
 		}
-		fmt.Println("║")
+		fmt.Println(" ║")
 	}
 
-	bottomBorder := "╚═"
 	for range grid[0] {
-		bottomBorder += "══"
 	}
-	bottomBorder += "╝"
 	fmt.Println(bottomBorder)
 }
 
