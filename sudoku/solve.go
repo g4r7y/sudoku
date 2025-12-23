@@ -20,10 +20,10 @@ func Solve(inputSudoku [][]int) ([][]int, error) {
 		subboxWidth = 2
 		subboxHeight = 2
 	default:
-		return nil, fmt.Errorf("sudoku has unsupported size")
+		return nil, fmt.Errorf("Sudoku has unsupported size")
 	}
 	if !VerifyPartialSudoku(inputSudoku) {
-		return nil, fmt.Errorf("sudoku is invalid")
+		return nil, fmt.Errorf("Sudoku is invalid")
 	}
 
 	//initialise result
